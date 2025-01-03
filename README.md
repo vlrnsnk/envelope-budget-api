@@ -1,6 +1,6 @@
 ## Envelope Budget API
 
-This API provides tools for developers to integrate envelope budgeting functionalities into their applications. 
+This API provides tools for developers to integrate envelope budgeting functionalities into their applications.
 
 **Features:**
 
@@ -11,7 +11,7 @@ This API provides tools for developers to integrate envelope budgeting functiona
 **Technology Stack:**
 
 * Node.js
-* Express 
+* Express
 
 **Prerequisites:**
 
@@ -38,12 +38,12 @@ npm install
 npm start
 ```
 
-This will start the server on port 5000 by default. You can access the API documentation at `http://localhost:5000/api-docs` (assuming you're running the server locally).
+This will start the server on port 8000 by default. You can access the API documentation at `http://localhost:8000/api-docs` (assuming you're running the server locally).
 
 
 ## API Documentation
 
-This API follows RESTful conventions for endpoints and uses JSON for request and response bodies. Detailed documentation for each endpoint is available at `http://localhost:5000/api-docs`.
+This API follows RESTful conventions for endpoints and uses JSON for request and response bodies. Detailed documentation for each endpoint is available at `http://localhost:8000/api-docs`.
 
 **Supported Endpoints:**
 
