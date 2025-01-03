@@ -1,0 +1,27 @@
+{
+  "name": "envelope-budget-api",
+  "version": "1.0.0",
+  "description": "This API provides tools for developers to integrate envelope budgeting functionalities into their applications.",
+  "main": "app.js",
+  "scripts": {
+    "dev": "nodemon app",
+    "start": "node app"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vlrnsnk/envelope-budget-api.git"
+  },
+  "keywords": [
+    "express",
+    "api"
+  ],
+  "author": "vlrnsnk",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/vlrnsnk/envelope-budget-api/issues"
+  },
+  "homepage": "https://github.com/vlrnsnk/envelope-budget-api#readme",
+  "devDependencies": {
+    "nodemon": "^3.1.9"
+  }
+}
