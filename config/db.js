@@ -25,3 +25,5 @@ const envelopes = [
     budget: 100,
   },
 ];
+
+module.exports = envelopes;
