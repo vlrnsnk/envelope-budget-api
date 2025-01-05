@@ -9,4 +9,14 @@ module.exports = {
 
     return newId;
   },
+
+  findById(data, id) {
+    const item = data.find(item => item.id === parseInt(id));
+
+    if (!item) {
+      console.log('Item not found');
+    }
+
+    return item;
+  },
 };

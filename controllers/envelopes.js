@@ -1,5 +1,5 @@
 const dbEnvelopes = require('../config/db.js');
-const { createId } = require('../helpers/db.js');
+const { createId, findById } = require('../helpers/db.js');
 
 exports.getEnvelopes = async (req, res) => {
   try {
@@ -29,5 +29,23 @@ exports.addEnvelope = async (req, res) => {
   } catch (error) {
     console.log(error);
     res.sendStatus(500);
+  }
+};
+
+exports.getEnvelopeById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const envelopes = await dbEnvelopes;
+    const envelope = findById(envelopes, id);
+
+    if (!envelope) {
+      return res.status(404).send({
+        message: 'Envelope not found',
+      });
+    }
+
+    res.status(200).send(envelope);
+  } catch (error) {
+    res.status(500).send(error);
   }
 };
