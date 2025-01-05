@@ -10,15 +10,22 @@ const {
   transferFunds,
 } = require('../controllers/envelopes.js');
 
+const {
+  loadEnvelopes,
+  findEnvelopeById,
+} = require('../middlewares/envelopes.js');
+
+router.use(loadEnvelopes);
+
 router.get('/', getEnvelopes);
 
 router.post('/', addEnvelope);
 
-router.get('/:id', getEnvelopeById);
+router.get('/:id', findEnvelopeById, getEnvelopeById);
 
-router.put('/:id', updateEnvelope);
+router.put('/:id', findEnvelopeById, updateEnvelope);
 
-router.delete('/:id', deleteEnvelope);
+router.delete('/:id', findEnvelopeById, deleteEnvelope);
 
 router.post('/:fromId/transfer/:toId', transferFunds);
 

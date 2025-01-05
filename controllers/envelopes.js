@@ -1,15 +1,12 @@
-const dbEnvelopes = require('../config/db.js');
 const {
   createId,
   findById,
-  deleteById
+  deleteById,
 } = require('../helpers/db.js');
 
 exports.getEnvelopes = async (req, res) => {
   try {
-    const envelopes = await dbEnvelopes;
-
-    res.status(200).send(envelopes);
+    res.status(200).send(req.envelopes);
   } catch (error) {
     res.status(400).send(error);
   }
@@ -23,11 +20,10 @@ exports.addEnvelope = async (req, res) => {
       return res.status(400).send('Data validation error');
     }
 
-    const envelopes = await dbEnvelopes;
-    const id = createId(envelopes);
+    const id = createId(req.envelopes);
     const newEnvelope = { id, name, budget };
 
-    envelopes.push(newEnvelope);
+    req.envelopes.push(newEnvelope);
 
     res.status(201).send(newEnvelope);
   } catch (error) {
@@ -37,17 +33,7 @@ exports.addEnvelope = async (req, res) => {
 
 exports.getEnvelopeById = async (req, res) => {
   try {
-    const { id } = req.params;
-    const envelopes = await dbEnvelopes;
-    const envelope = findById(envelopes, id);
-
-    if (!envelope) {
-      return res.status(404).send({
-        message: 'Envelope not found',
-      });
-    }
-
-    res.status(200).send(envelope);
+    res.status(200).send(req.envelope);
   } catch (error) {
     res.status(500).send(error);
   }
@@ -61,17 +47,7 @@ exports.updateEnvelope = async (req, res) => {
       return res.status(400).send('Data validation error');
     }
 
-    const { id } = req.params;
-
-    const envelopes = await dbEnvelopes;
-    const envelope = findById(envelopes, id);
-
-    if (!envelope) {
-      return res.status(404).send({
-        message: 'Envelope not found',
-      });
-    }
-
+    const envelope = req.envelope;
     envelope.name = name;
     envelope.budget = budget;
 
@@ -83,17 +59,9 @@ exports.updateEnvelope = async (req, res) => {
 
 exports.deleteEnvelope = async (req, res) => {
   try {
-    const { id } = req.params;
-    const envelopes = await dbEnvelopes;
-    const envelope = findById(envelopes, id);
+    const envelope = req.envelope;
 
-    if (!envelope) {
-      return res.status(404).send({
-        message: 'Envelope not found',
-      });
-    }
-
-    deleteById(envelopes, id);
+    deleteById(req.envelopes, envelope.id);
 
     res.sendStatus(204);
   } catch (error) {
@@ -110,11 +78,10 @@ exports.transferFunds = async (req, res) => {
       return res.status(400).send('Data validation error');
     }
 
-    const envelopes = await dbEnvelopes;
-    const originEnvelope = findById(envelopes, fromId);
-    const targetEnvelope = findById(envelopes, toId);
+    const originEnvelope = findById(req.envelopes, fromId);
+    const targetEnvelope = findById(req.envelopes, toId);
 
-    if (!originEnvelope || !targetEnvelope) {
+    if (!targetEnvelope) {
       return res.status(404).send({
         message: 'Envelope not found',
       });
@@ -131,6 +98,7 @@ exports.transferFunds = async (req, res) => {
 
     res.status(201).send([originEnvelope, targetEnvelope]);
   } catch (error) {
+    console.log(error);
     res.status(500).send(error);
   }
 };
