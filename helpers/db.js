@@ -19,4 +19,16 @@ module.exports = {
 
     return item;
   },
+
+  deleteById(data, id) {
+    const index = data.findIndex(item => item.id === parseInt(id));
+
+    if (index === -1) {
+      console.log('Invalid index');
+    }
+
+    data.splice(index, 1);
+
+    return data;
+  },
 };

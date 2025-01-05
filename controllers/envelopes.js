@@ -1,5 +1,9 @@
 const dbEnvelopes = require('../config/db.js');
-const { createId, findById } = require('../helpers/db.js');
+const {
+  createId,
+  findById,
+  deleteById
+} = require('../helpers/db.js');
 
 exports.getEnvelopes = async (req, res) => {
   try {
@@ -73,7 +77,26 @@ exports.updateEnvelope = async (req, res) => {
 
     res.status(200).send(envelope);
   } catch (error) {
-    console.log(error)
+    res.status(500).send(error);
+  }
+};
+
+exports.deleteEnvelope = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const envelopes = await dbEnvelopes;
+    const envelope = findById(envelopes, id);
+
+    if (!envelope) {
+      return res.status(404).send({
+        message: 'Envelope not found',
+      });
+    }
+
+    deleteById(envelopes, id);
+
+    res.sendStatus(204);
+  } catch (error) {
     res.status(500).send(error);
   }
 };
