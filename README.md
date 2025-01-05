@@ -1,4 +1,4 @@
-## Envelope Budget API
+# Envelope Budget API
 
 This API provides tools for developers to integrate envelope budgeting functionalities into their applications.
 
@@ -43,23 +43,18 @@ This will start the server on port 8000 by default. You can access the API docum
 
 ## API Documentation
 
-This API follows RESTful conventions for endpoints and uses JSON for request and response bodies. Detailed documentation for each endpoint is available at `http://localhost:8000/api-docs`.
-
+This API follows RESTful conventions for endpoints and uses JSON for request and response bodies.
 **Supported Endpoints:**
 
 * **Envelopes:**
-    * `GET /envelopes`: Get a list of all envelopes.
-    * `POST /envelopes`: Create a new envelope.
-    * `GET /envelopes/:id`: Get details of a specific envelope.
-    * `PUT /envelopes/:id`: Update an existing envelope.
-    * `DELETE /envelopes/:id`: Delete an envelope.
+    * `GET /api/v1/envelopes`: Get a list of all envelopes.
+    * `POST /api/v1/envelopes`: Create a new envelope.
+    * `GET /api/v1/envelopes/:id`: Get details of a specific envelope.
+    * `PUT /api/v1/envelopes/:id`: Update an existing envelope.
+    * `DELETE /api/v1/envelopes/:id`: Delete an envelope.
+    * `POST /api/v1/envelope/{fromId}/transfer/{toId}`: Transfer money between envelopes.
 * **Transactions (planned for future implementation):**
     * Endpoints for managing transactions within envelopes will be added in future versions.
-
-
-## Contributing
-
-We welcome contributions to this project! Please see the `CONTRIBUTING.md` file for details on how to contribute code and report issues.
 
 ## License
 
