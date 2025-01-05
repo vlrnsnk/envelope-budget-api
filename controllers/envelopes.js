@@ -100,3 +100,37 @@ exports.deleteEnvelope = async (req, res) => {
     res.status(500).send(error);
   }
 };
+
+exports.transferFunds = async (req, res) => {
+  try {
+    const { fromId, toId } = req.params;
+    const { amount } = req.body;
+
+    if (!amount || isNaN(amount) || Number(amount) < 0) {
+      return res.status(400).send('Data validation error');
+    }
+
+    const envelopes = await dbEnvelopes;
+    const originEnvelope = findById(envelopes, fromId);
+    const targetEnvelope = findById(envelopes, toId);
+
+    if (!originEnvelope || !targetEnvelope) {
+      return res.status(404).send({
+        message: 'Envelope not found',
+      });
+    }
+
+    if (originEnvelope.budget < amount) {
+      return res.status(400).send({
+        message: 'Amount to transfer exceeds envelope budget funds',
+      });
+    }
+
+    originEnvelope.budget -= amount;
+    targetEnvelope.budget += amount;
+
+    res.status(201).send([originEnvelope, targetEnvelope]);
+  } catch (error) {
+    res.status(500).send(error);
+  }
+};
