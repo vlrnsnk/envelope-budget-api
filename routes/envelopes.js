@@ -1,12 +1,10 @@
 const express = require('express');
 const router = express.Router();
 
-const { getEnvelopes } = require('../controllers/envelopes.js');
+const { getEnvelopes, addEnvelope } = require('../controllers/envelopes.js');
 
 router.get('/', getEnvelopes);
 
-router.post('/', (req, res, next) => {
-  res.status(201).send('POST');
-});
+router.post('/', addEnvelope);
 
 module.exports = router;
