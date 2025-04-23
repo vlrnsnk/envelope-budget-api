@@ -1,29 +1,21 @@
-const envelopes = [
-  {
-    id: 1,
-    name: "Groceries",
-    budget: 500,
-  },
-  {
-    id: 2,
-    name: "Rent",
-    budget: 1200,
-  },
-  {
-    id: 3,
-    name: "Utilities",
-    budget: 150,
-  },
-  {
-    id: 4,
-    name: "Transportation",
-    budget: 300,
-  },
-  {
-    id: 5,
-    name: "Entertainment",
-    budget: 100,
-  },
-];
+const { Client } = require('pg');
+require('dotenv').config();
 
-module.exports = envelopes;
+const client = new Client({
+  user: process.env.DB_USER || 'postgres',
+  host: process.env.DB_HOST || 'localhost',
+  database: process.env.DB_NAME || 'envelope_budget',
+  password: process.env.DB_PASSWORD || 'password',
+  port: process.env.DB_PORT || 5432,
+});
+
+client.connect().then(() => {
+  console.log('Connected to database');
+}).catch((err) => {
+  console.error('Error connecting to database', err);
+});
+
+module.exports = {
+  query: (text, params) => client.query(text, params),
+  close: () => client.end(),
+};
