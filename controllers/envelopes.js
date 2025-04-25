@@ -74,10 +74,19 @@ exports.deleteEnvelope = async (req, res) => {
   try {
     const envelope = req.envelope;
 
-    deleteById(req.envelopes, envelope.id);
+    const result = await db.query(`
+      DELETE FROM envelopes
+      WHERE id = $1
+      RETURNING *;`
+    , [envelope.id]);
+
+    if (result.rows.length === 0) {
+      return res.status(404).send('Envelope not found');
+    }
 
     res.sendStatus(204);
   } catch (error) {
+    console.log('Delete error:', error);
     res.status(500).send(error);
   }
 };
