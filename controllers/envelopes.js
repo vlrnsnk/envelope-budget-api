@@ -1,8 +1,3 @@
-const {
-  findById,
-  deleteById,
-} = require('../helpers/db.js');
-
 const db = require('../config/db.js');
 
 exports.getEnvelopes = async (req, res) => {
@@ -95,32 +90,58 @@ exports.transferFunds = async (req, res) => {
   try {
     const { fromId, toId } = req.params;
     const { amount } = req.body;
+    const numericAmount = Number(amount);
 
-    if (!amount || isNaN(amount) || Number(amount) < 0) {
+    if (!amount || isNaN(numericAmount) || numericAmount < 0) {
       return res.status(400).send('Data validation error');
     }
 
-    const originEnvelope = findById(req.envelopes, fromId);
-    const targetEnvelope = findById(req.envelopes, toId);
+    await db.query('BEGIN');
 
-    if (!targetEnvelope) {
+    const originResult = await db.query(
+      'SELECT * FROM envelopes WHERE id = $1 FOR UPDATE',
+      [fromId],
+    );
+    const targetResult = await db.query(
+      'SELECT * FROM envelopes WHERE id = $1 FOR UPDATE',
+      [toId],
+    );
+
+    const originEnvelope = originResult.rows[0];
+    const targetEnvelope = targetResult.rows[0];
+
+    if (!targetEnvelope || !originEnvelope) {
+      await db.query('ROLLBACK');
+
       return res.status(404).send({
         message: 'Envelope not found',
       });
     }
 
-    if (originEnvelope.budget < amount) {
+    if (originEnvelope.budget < numericAmount) {
+      await db.query('ROLLBACK');
+
       return res.status(400).send({
         message: 'Amount to transfer exceeds envelope budget funds',
       });
     }
 
-    originEnvelope.budget -= amount;
-    targetEnvelope.budget += amount;
+    const updatedOrigin = await db.query(
+      'UPDATE envelopes SET budget = budget - $1 WHERE id = $2 RETURNING *',
+      [numericAmount, fromId],
+    );
 
-    res.status(201).send([originEnvelope, targetEnvelope]);
+    const updatedTarget = await db.query(
+      'UPDATE envelopes SET budget = budget + $1 WHERE id = $2 RETURNING *',
+      [numericAmount, toId],
+    );
+
+    await db.query('COMMIT');
+
+    res.status(201).send([updatedOrigin.rows[0], updatedTarget.rows[0]]);
   } catch (error) {
-    console.log(error);
+    await db.query('ROLLBACK');
+    console.log('Transfer error:',error);
     res.status(500).send(error);
   }
 };
