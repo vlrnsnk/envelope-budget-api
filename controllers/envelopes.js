@@ -51,11 +51,21 @@ exports.updateEnvelope = async (req, res) => {
     }
 
     const envelope = req.envelope;
-    envelope.name = name;
-    envelope.budget = budget;
 
-    res.status(200).send(envelope);
+    const result = await db.query(`
+      UPDATE envelopes
+      SET name = $1, budget = $2
+      WHERE id = $3
+      RETURNING *;
+    `, [name, budget, envelope.id]);
+
+    if (result.rows.length === 0) {
+      return res.status(404).send('Envelope not found');
+    }
+
+    res.status(200).send(result.rows[0]);
   } catch (error) {
+    console.log('Update error:', error);
     res.status(500).send(error);
   }
 };
