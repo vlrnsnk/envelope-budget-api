@@ -1,8 +1,9 @@
 const {
-  createId,
   findById,
   deleteById,
 } = require('../helpers/db.js');
+
+const db = require('../config/db.js');
 
 exports.getEnvelopes = async (req, res) => {
   try {
@@ -13,20 +14,22 @@ exports.getEnvelopes = async (req, res) => {
 };
 
 exports.addEnvelope = async (req, res) => {
+  const { name, budget } = req.body;
+
+  if (!name || !budget || Number(budget) < 0) {
+    return res.status(400).send('Data validation error');
+  }
+
   try {
-    const { name, budget } = req.body;
+    const result = await db.query(`
+      INSERT INTO envelopes (name, budget)
+      VALUES ($1, $2)
+      RETURNING *;
+    `, [name, budget]);
 
-    if (!name || !budget || Number(budget) < 0) {
-      return res.status(400).send('Data validation error');
-    }
-
-    const id = createId(req.envelopes);
-    const newEnvelope = { id, name, budget };
-
-    req.envelopes.push(newEnvelope);
-
-    res.status(201).send(newEnvelope);
+    res.status(201).send(result.rows[0]);
   } catch (error) {
+    console.error('DB error:', error);
     res.status(500).send(error);
   }
 };
